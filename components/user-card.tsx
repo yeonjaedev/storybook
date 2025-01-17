@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { AlertTriangleIcon, BadgeCheckIcon, UserCheck2Icon, UserRoundXIcon, UsersIcon } from "lucide-react";
 import Link from "next/link";
 
@@ -21,9 +22,24 @@ export const UserCard = ({ title, employeesPresentPercentage }: UserCardProps) =
             <div className="text-5xl font-bold">{employeesPresentPercentage}</div>
           </div>
           <div>
-            <Button size="xs" asChild>
-              <Link href="/dashboard/teams">View all</Link>
-            </Button>
+            <Popover data-test-id="employee-list-popover">
+              <PopoverTrigger asChild>
+                <Button size="xs">View All</Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-52">
+                <h5>Employee List</h5>
+                <ul>
+                  <li>John</li>
+                  <li>Ally</li>
+                  <li>Nick</li>
+                  <li>Jay</li>
+                  <li>Kim</li>
+                </ul>
+              </PopoverContent>
+            </Popover>
+            {/*<Button size="xs" asChild>*/}
+            {/*  <Link href="/dashboard/teams">View all</Link>*/}
+            {/*</Button>*/}
           </div>
         </div>
       </CardContent>
