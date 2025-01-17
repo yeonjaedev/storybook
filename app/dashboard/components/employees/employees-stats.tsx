@@ -1,26 +1,11 @@
+import WorkLocationTrends from "./work-location-trends";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  AlertTriangleIcon,
-  BadgeCheckIcon,
-  LaptopIcon,
-  PartyPopperIcon,
-  UserCheck2Icon,
-  UserCheckIcon,
-  UserIcon,
-  UserRoundXIcon,
-} from "lucide-react";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import cm from "@/public/images/cm.jpg";
+import { AlertTriangleIcon, BadgeCheckIcon, LaptopIcon, PartyPopperIcon, UserCheck2Icon, UserIcon, UserRoundXIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import cm from "@/public/images/cm.jpg";
-import WorkLocationTrends from "./work-location-trends";
 
 export default function EmployeesStats() {
   const totalEmployees = 100;
@@ -52,11 +37,7 @@ export default function EmployeesStats() {
           </CardHeader>
           <CardContent>
             <div className="flex gap-2">
-              {employeesPresentPercentage > 75 ? (
-                <UserCheck2Icon />
-              ) : (
-                <UserRoundXIcon />
-              )}
+              {employeesPresentPercentage > 75 ? <UserCheck2Icon /> : <UserRoundXIcon />}
               <div className="text-5xl font-bold">{employeesPresent}</div>
             </div>
           </CardContent>
