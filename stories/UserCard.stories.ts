@@ -20,3 +20,10 @@ export const Default: Story = {
     employeesPresentPercentage: 80,
   },
 };
+
+export const Under: Story = {
+  args: {
+    title: "Engineering",
+    employeesPresentPercentage: 48,
+  },
+};

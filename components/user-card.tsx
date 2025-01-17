@@ -10,19 +10,21 @@ interface UserCardProps {
 
 export const UserCard = ({ title, employeesPresentPercentage }: UserCardProps) => {
   return (
-    <Card>
+    <Card className="w-80">
       <CardHeader className="pb-2">
         <CardTitle className="text-base">{title}</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="flex gap-2">
-          {employeesPresentPercentage > 75 ? <UserCheck2Icon /> : <UserRoundXIcon />}
-          <div className="text-5xl font-bold">{employeesPresentPercentage}</div>
-        </div>
-        <div>
-          <Button size="xs" asChild>
-            <Link href="/dashboard/teams">View all</Link>
-          </Button>
+        <div className="flex gap-4 justify-between">
+          <div className="flex gap-2">
+            {employeesPresentPercentage > 75 ? <UserCheck2Icon /> : <UserRoundXIcon />}
+            <div className="text-5xl font-bold">{employeesPresentPercentage}</div>
+          </div>
+          <div>
+            <Button size="xs" asChild>
+              <Link href="/dashboard/teams">View all</Link>
+            </Button>
+          </div>
         </div>
       </CardContent>
       <CardFooter>
