@@ -9,7 +9,8 @@ const config: StorybookConfig = {
     "@storybook/addon-interactions",
     "@storybook/addon-actions",
     "@storybook/addon-themes",
-    "@storybook/addon-a11y"
+    "@storybook/addon-a11y",
+    "@storybook/addon-designs"
   ],
   framework: {
     name: "@storybook/nextjs",
@@ -18,3 +19,15 @@ const config: StorybookConfig = {
   staticDirs: ["../public"],
 };
 export default config;
+
+// export const docs = {};
+//
+// export const framework = {
+//   name: "@storybook/nextjs",
+//   options: {}
+// };
+//
+// export const typescript = {
+//   reactDocgen: "react-docgen-typescript"
+// };
+// export const addons = ["@chromatic-com/storybook"];

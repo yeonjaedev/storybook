@@ -27,14 +27,7 @@ export const columns: ColumnDef<Employee>[] = [
 
       return (
         <Avatar>
-          {!!avatar && (
-            <Image
-              height={40}
-              width={40}
-              src={avatar}
-              alt={`${firstName} ${lastName} avatar`}
-            />
-          )}
+          {!!avatar && <Image height={40} width={40} src={avatar} alt={`${firstName} ${lastName} avatar`} />}
           <AvatarFallback className="uppercase">
             {firstName[0]}
             {lastName[0]}

@@ -15,7 +15,7 @@ const meta = {
 
 export default meta;
 type Story = StoryObj<typeof meta>;
-export const Default: Story = {
+export const Over: Story = {
   args: {
     title: "Engineering",
     employeesPresentPercentage: 80,

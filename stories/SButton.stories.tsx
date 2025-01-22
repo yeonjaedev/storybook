@@ -2,11 +2,13 @@ import { Button } from "@/components/ui/button";
 import { action } from "@storybook/addon-actions";
 import type { Meta, StoryObj } from "@storybook/react";
 import { userEvent, within } from "@storybook/test";
+import { MailOpen } from "lucide-react";
+import { UserRound } from "lucide-react";
 
 // 스토리북에서 컴포넌트의 메타 데이터를 정의합니다.
 
 const meta: Meta<typeof Button> = {
-  //  스토리북에서 해당 컴포넌트 정보를 표기할 경로를입력합니다. Components 폴더 아래 Button 스토리를 위치시킵니다.
+  //  스토리북에서 해당 컴포넌트 정보를 표기할 경로를 입력합니다.
   title: "Components/Button",
 
   // 스토리북에 적용할 실제 컴포넌트를 입력합니다.
@@ -60,6 +62,12 @@ export const Default: Story = {
     onClick: action("default click"),
     children: "Default Button",
   },
+  parameters: {
+    design: {
+      type: "figma",
+      url: "https://www.figma.com/design/otFD9ebyHm6yYK9Nzd1qZ2/%40shadcn%2Fui---Design-System-(Community)?node-id=13-2478&t=XajwRQ9WBjmJ9yqU-4",
+    },
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(
@@ -107,5 +115,25 @@ export const Link: Story = {
     disabled: false,
     onClick: action("default click"),
     children: "Link Button",
+  },
+};
+
+export const Icon: Story = {
+  args: {
+    variant: "outline",
+    size: "sm",
+    disabled: false,
+    onClick: action("default click"),
+    children: <UserRound />,
+  },
+};
+
+export const Inaccessible: Story = {
+  args: {
+    size: "sm",
+    className: "text-black-100",
+    disabled: false,
+    onClick: action("default click"),
+    children: "Inaccessible Button",
   },
 };

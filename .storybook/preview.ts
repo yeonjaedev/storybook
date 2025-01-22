@@ -1,7 +1,9 @@
 import "../app/globals.css";
 import { withThemeByClassName } from "@storybook/addon-themes";
 import type { Preview } from "@storybook/react";
+import { mswLoader, initialize } from "msw-storybook-addon";
 
+initialize();
 const preview: Preview = {
   parameters: {
     controls: {
@@ -11,6 +13,7 @@ const preview: Preview = {
       },
     },
   },
+
   decorators: [
     withThemeByClassName({
       themes: {
@@ -20,6 +23,11 @@ const preview: Preview = {
       defaultTheme: "light",
     }),
   ],
+
+  // 👈 Add the MSW loader to all stories
+  loaders: [mswLoader],
+
+  tags: ["autodocs"]
 };
 
 export default preview;
