@@ -23,6 +23,8 @@ jobs:
         with:
           # ⚠️ Make sure to configure a `CHROMATIC_PROJECT_TOKEN` repository secret
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+      - name: run storybook
+        run: pnpm run storybook
       - name: test
         run: pnpm test-storybook
       - name: test-ci
