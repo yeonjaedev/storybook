@@ -13,8 +13,13 @@ jobs:
         with:
           node-version: 20
       - name: Install pnpm
-        run: |
-          npm install -g pnpm
+        uses: pnpm/action-setup@v2
+        id: pnpm-install
+        with:
+          run_install: false
+
+      - name: Install Dependency
+        run: pnpm install -no-frozen-lockfile
       - name: Install dependencies
         # ⚠️ See your package manager's documentation for the correct command to install dependencies in a CI environment.
         run: pnpm i
@@ -23,9 +28,5 @@ jobs:
         with:
           # ⚠️ Make sure to configure a `CHROMATIC_PROJECT_TOKEN` repository secret
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
-      # - name: run storybook
-      #   run: pnpm run storybook
-      # - name: test
-      #   run: pnpm test-storybook
       - name: test-ci
         run: pnpm test-storybook:ci
