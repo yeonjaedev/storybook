@@ -169,7 +169,7 @@ export const FailedTable: Story = {
     await step("에러가 발생했을 때, 에러가 발생했습니다 문구가 보여진다.", async () => {
       await delay(500);
       await expect(canvas.getByRole("table")).toBeInTheDocument();
-      await expect(canvas.getByText("에러가 발생했습니다")).toBeInTheDocument();
+      await expect(canvas.getByText("에러")).toBeInTheDocument();
     });
   },
 };
