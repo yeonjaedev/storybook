@@ -2,7 +2,6 @@ name: 'Storybook Tests'
 on: push
 jobs:
   chromatic:
-    needs: storybook-test
     name: Run Chromatic
     runs-on: ubuntu-latest
     steps:
