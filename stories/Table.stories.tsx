@@ -1,17 +1,21 @@
 import { Header } from "./assets/Header";
 import { columns, type Employee } from "@/app/dashboard/employees/columns";
-import { EmployeeList } from "@/components/EmployeeList";
+import EmployeeList from "@/components/employee-list";
 import { DataTable } from "@/components/ui/data-table";
 import type { Meta, StoryObj } from "@storybook/react";
-import { fn } from "@storybook/test";
+import { expect, fn, userEvent, within } from "@storybook/test";
 import { ColumnDef } from "@tanstack/react-table";
 import { delay, http, HttpResponse } from "msw";
+import { QueryClient, QueryClientProvider } from "react-query";
+
+const queryClient = new QueryClient();
 
 const meta = {
   title: "Components/DataTable",
   component: EmployeeList,
   // This component will have an automatically generated Autodocs entry: https://storybook.js.org/docs/writing-docs/autodocs
   tags: ["autodocs"],
+  decorators: [Story => <QueryClientProvider client={queryClient}>{Story()}</QueryClientProvider>],
   parameters: {
     // More on how to position stories at: https://storybook.js.org/docs/configure/story-layout
     layout: "centered",
@@ -28,7 +32,6 @@ const mockData: Employee[] = [
     lastName: "Murray",
     teamName: "alpha",
     isTeamLeader: true,
-    avatar: "/images/cm.jpg",
   },
   {
     id: 2,
@@ -50,7 +53,6 @@ const mockData: Employee[] = [
     lastName: "Fey",
     teamName: "canary",
     isTeamLeader: true,
-    avatar: "/images/tf.jpg",
   },
   {
     id: 5,
@@ -79,7 +81,6 @@ const mockData: Employee[] = [
     lastName: "Lopez",
     teamName: "delta",
     isTeamLeader: false,
-    avatar: "/images/rl.jpg",
   },
   {
     id: 9,
@@ -92,27 +93,59 @@ const mockData: Employee[] = [
 
 export const SuccessTable: Story = {
   parameters: {
+    // API 요청을 가로채고 응답을 모의하는 설정
     msw: {
       handlers: [
-        http.get("https://supportme.com/employee", async () => {
-          await delay(500);
-          return HttpResponse.json(mockData);
+        http.get("https://supportme.com/employee", async ({ request }) => {
+          // Construct a URL instance out of the intercepted request.
+          const url = new URL(request.url);
+          // Read the "team" URL query parameter using the "URLSearchParams" API.
+          const teamName = url.searchParams.get("team");
+
+          if (teamName === "delta") {
+            return HttpResponse.json(mockData.filter(value => value.teamName === "delta"));
+          } else if (teamName === "canary") {
+            return HttpResponse.json(mockData.filter(value => value.teamName === "canary"));
+          } else if (teamName === "alpha") {
+            return HttpResponse.json(mockData.filter(value => value.teamName === "alpha"));
+          } else {
+            return HttpResponse.json(mockData);
+          }
         }),
       ],
     },
   },
-};
 
-export const InputValueTable: Story = {
-  parameters: {
-    msw: {
-      handlers: [
-        http.get("https://supportme.com/employee", async () => {
-          await delay(500);
-          return HttpResponse.json(mockData.filter(value => value.teamName === "delta"));
-        }),
-      ],
-    },
+  play: async ({ canvasElement, step, args }) => {
+    const canvas = within(canvasElement);
+
+    await step("alpha 팀을 선택하면 'alpha' 팀의 데이터만 보여진다.", async () => {
+      await userEvent.click(canvas.getByRole("combobox"));
+      await userEvent.click(within(canvasElement.ownerDocument!.body).getByRole("option", { name: /alpha/i }));
+      await delay(300);
+      expect(canvas.getAllByRole("row", { name: /alpha/i }).length).toBe(mockData.filter(data => data.teamName === "alpha").length);
+    });
+    await step("canary 팀을 선택하면 'canary' 팀의 데이터만 보여진다.", async () => {
+      await userEvent.click(canvas.getByRole("combobox"));
+      await userEvent.click(within(canvasElement.ownerDocument!.body).getByRole("option", { name: /canary/i }));
+      await delay(300);
+
+      expect(canvas.getAllByRole("row", { name: /canary/i }).length).toBe(mockData.filter(data => data.teamName === "canary").length);
+    });
+    await step("delta 팀을 선택하면 'delta' 팀의 데이터만 보여진다.", async () => {
+      await userEvent.click(canvas.getByRole("combobox"));
+      await userEvent.click(within(canvasElement.ownerDocument!.body).getByRole("option", { name: /delta/i }));
+      await delay(300);
+
+      expect(canvas.getAllByRole("row", { name: /delta/i }).length).toBe(mockData.filter(data => data.teamName === "delta").length);
+    });
+    await step("Select a team 을 선택하면 모든 데이터가 보여진다.", async () => {
+      await userEvent.click(canvas.getByRole("combobox"));
+      await userEvent.click(within(canvasElement.ownerDocument!.body).getByRole("option", { name: /Select a team/i }));
+      await delay(300);
+
+      expect(canvas.getByRole("button", { name: /Go to next page/i })).toBeEnabled();
+    });
   },
 };
 
@@ -121,7 +154,7 @@ export const FailedTable: Story = {
     msw: {
       handlers: [
         http.get("https://supportme.com/employee", async () => {
-          await delay(800);
+          await delay(300);
           return new HttpResponse(null, {
             status: 403,
           });
@@ -129,6 +162,17 @@ export const FailedTable: Story = {
       ],
     },
   },
+
+  play: async ({ canvasElement, step, args }) => {
+    const canvas = within(canvasElement);
+
+    await step("에러가 발생했을 때, 에러가 발생했습니다 문구가 보여진다.", async () => {
+      await delay(500);
+      await expect(canvas.getByRole("table")).toBeInTheDocument();
+      await expect(canvas.getByText("에러가 발생했습니다")).toBeInTheDocument();
+    });
+  },
 };
+
 
 // <DataTable columns={columns} data={employees} />;

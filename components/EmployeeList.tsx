@@ -1,24 +1,21 @@
+"use client";
+
 import { columns } from "@/app/dashboard/employees/columns";
-import { InputForm } from "@/components/input-form";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
-import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
-import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Popover, PopoverContent } from "@/components/ui/popover";
-import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search } from "lucide-react";
-import React, { useState, useEffect } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import React, { useState, useEffect, useCallback } from "react";
+import { useForm, UseFormReturn } from "react-hook-form";
+import { z } from "zod";
 
 // Example hook to retrieve data from an external endpoint
-function useFetchData() {
+function useFetchData(team?: string) {
   const [status, setStatus] = useState<string>("idle");
   const [data, setData] = useState<any[]>([]);
   useEffect(() => {
     setStatus("loading");
-    fetch("https://supportme.com/employee")
+    fetch(team ? `https://supportme.com/employee?team=${team}` : "https://supportme.com/employee")
       .then(res => {
         if (!res.ok) {
           throw new Error(res.statusText);
@@ -41,43 +38,61 @@ function useFetchData() {
   };
 }
 
-export function EmployeeList() {
+const List = () => {
   const { status, data } = useFetchData();
 
   if (status === "loading") {
     return <LoadingSpinner />;
-  }
-  if (status === "error") {
+  } else if (status === "error") {
     return (
       <>
         <DataTable columns={columns} data={[]} errorMsg={"에러가 발생했습니다"} />
       </>
     );
+  } else if (data) {
+    return (
+      <>
+        <DataTable columns={columns} data={data} />
+      </>
+    );
+  } else {
+    return <></>;
   }
-  return Page(data);
-}
+};
 
-export function Page(data: any) {
-  // const [name, setName] = useState<string>("");
+const inputSchema = z.object({
+  team: z.string(),
+});
+type InputSchema = z.infer<typeof inputSchema>;
+
+export const EmployeeList = () => {
+  const form = useForm<InputSchema>({ resolver: zodResolver(inputSchema) });
+  const [team, setTeam] = useState<string>("");
+
+  // useEffect(() => {
+  //   useFetchData(team);
+  // }, [team]);
+
   return (
     <>
-      <div className="flex flex-row	space-x-2 my-3">
-        <Select>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Select Team" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>Team</SelectLabel>
-              <SelectItem value="alpha">alpha</SelectItem>
-              <SelectItem value="canary">canary</SelectItem>
-              <SelectItem value="delta">delta</SelectItem>
-            </SelectGroup>
-          </SelectContent>
+      <form className="space-x-1 flex flex-col w-40">
+        <Select onValueChange={data => setTeam(data)}>
+          <SelectGroup>
+            <SelectTrigger>
+              <SelectValue {...form.register("team")} placeholder="Select a team" />
+            </SelectTrigger>
+            <SelectContent>
+              {["alpha", "canary", "delta"].map(id => (
+                <SelectItem key={id} value={String(id)}>
+                  {id}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </SelectGroup>
         </Select>
-      </div>
-
-      <DataTable columns={columns} data={data} />
+      </form>
+      <List />
     </>
   );
-}
+};
+export default EmployeeList;

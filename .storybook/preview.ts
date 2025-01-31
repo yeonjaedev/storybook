@@ -2,6 +2,9 @@ import "../app/globals.css";
 import { withThemeByClassName } from "@storybook/addon-themes";
 import type { Preview } from "@storybook/react";
 import { mswLoader, initialize } from "msw-storybook-addon";
+import { QueryClient } from "react-query";
+
+const queryClient = new QueryClient();
 
 initialize();
 const preview: Preview = {
@@ -27,7 +30,7 @@ const preview: Preview = {
   // 👈 Add the MSW loader to all stories
   loaders: [mswLoader],
 
-  tags: ["autodocs"]
+  tags: ["autodocs"],
 };
 
 export default preview;

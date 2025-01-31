@@ -30,7 +30,7 @@ export const Default: Story = {
     // 테스트 단계를 명확히 구분하여 각 단계에서 어떤 동작이 수행되고 확인되는지 설명.
     await step("두 글자 이하 입력 시 에러 문구가 표시된다.", async () => {
       await userEvent.type(canvas.getByPlaceholderText(args.placeholderText), "송");
-      await userEvent.click(canvas.getByRole("button"));
+      await userEvent.click(canvas.getByRole("button", { name: /SUBMIT/i }));
       await expect(canvas.getByText("사용자 이름은 최소 2자 이상이어야 합니다.")).toBeInTheDocument();
     });
 
@@ -39,7 +39,7 @@ export const Default: Story = {
     });
 
     await step("Submit 버튼을 클릭하면 onSubmit 함수가 호출된다.", async () => {
-      await userEvent.click(canvas.getByRole("button"));
+      await userEvent.click(canvas.getByRole("button", { name: /SUBMIT/i }));
       await waitFor(() => expect(args.onSubmit).toHaveBeenCalled());
     });
   },
