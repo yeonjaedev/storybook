@@ -1,9 +1,27 @@
-name: "Chromatic"
-
+name: 'Storybook Tests'
 on: push
-
 jobs:
+  storybook-test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+      - name: Install dependencies
+        run: yarn
+      - name: Install Playwright
+        run: npx playwright install --with-deps
+      - name: Build Storybook
+        run: yarn build-storybook --quiet
+      - name: Serve Storybook and run tests
+        run: |
+          npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
+            "npx http-server storybook-static --port 6006 --silent" \
+            "npx wait-on tcp:127.0.0.1:6006 && yarn test-storybook"
   chromatic:
+    needs: storybook-test
     name: Run Chromatic
     runs-on: ubuntu-latest
     steps:
@@ -13,10 +31,10 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
-          node-version: 22.12.0
+          node-version: 20
       - name: Install dependencies
         # ⚠️ See your package manager's documentation for the correct command to install dependencies in a CI environment.
-        run: pnpm i
+        run: npm ci
       - name: Run Chromatic
         uses: chromaui/action@latest
         with:
