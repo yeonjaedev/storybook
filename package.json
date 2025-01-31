@@ -11,7 +11,7 @@
     "build-storybook": "storybook build",
     "chromatic": "npx chromatic --project-token=chpt_7210b8d9ee50d9a",
     "test-storybook": "test-storybook --verbose",
-    "test-storybook:ci": "npx concurrently -k -s first -n \"SB,TEST\" -c \"magenta,blue\" \"pnpm build-storybook --quiet && npx http-server storybook-static --port 6006 --silent\" \"wait-on tcp:6006 && pnpm test-storybook\""
+    "test-storybook:ci": "npx concurrently -k -s first -n \"SB,TEST\" -c \"magenta,blue\" \"pnpm build-storybook --quiet && npx http-server storybook-static --port 6006 --silent\" \"wait-on tcp:127.0.0.1:6006 && pnpm test-storybook\""
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
