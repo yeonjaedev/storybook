@@ -1,45 +1,21 @@
 "use client";
+
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { CalendarIcon, PersonStandingIcon } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { useRouter } from "next/navigation";
 
 const formSchema = z
   .object({
@@ -51,20 +27,16 @@ const formSchema = z
       .boolean({
         required_error: "You must accept the terms and conditions",
       })
-      .refine((checked) => checked, "You must accept the terms and conditions"),
-    dob: z.date().refine((date) => {
+      .refine(checked => checked, "You must accept the terms and conditions"),
+    dob: z.date().refine(date => {
       const today = new Date();
-      const eighteedYearsAgo = new Date(
-        today.getFullYear() - 18,
-        today.getMonth(),
-        today.getDate()
-      );
+      const eighteedYearsAgo = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
       return date <= eighteedYearsAgo;
     }, "You must be at least 18 years old"),
     password: z
       .string()
       .min(8, "Password must contain at least 8 characters")
-      .refine((password) => {
+      .refine(password => {
         // must contain at least 1 special character and 1 uppercase character
         return /^(?=.*[!@#$%^&*])(?=.*[A-Z]).*$/.test(password);
       }, "Password must contain at least 1 special character and 1 uppercase letter"),
@@ -87,10 +59,7 @@ const formSchema = z
       });
     }
 
-    if (
-      data.accountType === "company" &&
-      (!data.numberOfEmployees || data.numberOfEmployees < 1)
-    ) {
+    if (data.accountType === "company" && (!data.numberOfEmployees || data.numberOfEmployees < 1)) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ["numberOfEmployees"],
@@ -114,6 +83,7 @@ export default function SignupPage() {
 
   const handleSubmit = (data: z.infer<typeof formSchema>) => {
     console.log("login validation passed: ", data);
+
     router.push("/dashboard");
   };
 
@@ -124,7 +94,6 @@ export default function SignupPage() {
 
   return (
     <>
-      <PersonStandingIcon size={50} />
       <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle>Sign up</CardTitle>
@@ -132,10 +101,7 @@ export default function SignupPage() {
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form
-              className="flex flex-col gap-4"
-              onSubmit={form.handleSubmit(handleSubmit)}
-            >
+            <form className="flex flex-col gap-4" onSubmit={form.handleSubmit(handleSubmit)}>
               <FormField
                 control={form.control}
                 name="email"
@@ -192,13 +158,7 @@ export default function SignupPage() {
                       <FormItem>
                         <FormLabel>Employees</FormLabel>
                         <FormControl>
-                          <Input
-                            type="number"
-                            min={0}
-                            placeholder="Employees"
-                            {...field}
-                            value={field.value ?? ""}
-                          />
+                          <Input type="number" min={0} placeholder="Employees" {...field} value={field.value ?? ""} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -206,46 +166,39 @@ export default function SignupPage() {
                   />
                 </>
               )}
-              <FormField
-                control={form.control}
-                name="dob"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col pt-2">
-                    <FormLabel>Date of birth</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant="outline"
-                            className="normal-case flex justify-between pr-1"
-                          >
-                            {!!field.value ? (
-                              format(field.value, "PPP")
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                            <CalendarIcon />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent align="start" className="w-auto p-0">
-                        <Calendar
-                          mode="single"
-                          defaultMonth={field.value}
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          fixedWeeks
-                          weekStartsOn={1}
-                          fromDate={dobFromDate}
-                          toDate={new Date()}
-                          captionLayout="dropdown-buttons"
-                        />
-                      </PopoverContent>
-                    </Popover>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              {/*<FormField*/}
+              {/*  control={form.control}*/}
+              {/*  name="dob"*/}
+              {/*  render={({ field }) => (*/}
+              {/*    <FormItem className="flex flex-col pt-2">*/}
+              {/*      <FormLabel>Date of birth</FormLabel>*/}
+              {/*      <Popover>*/}
+              {/*        <PopoverTrigger asChild>*/}
+              {/*          <FormControl>*/}
+              {/*            <Button variant="outline" className="normal-case flex justify-between pr-1">*/}
+              {/*              {!!field.value ? format(field.value, "PPP") : <span>Pick a date</span>}*/}
+              {/*              <CalendarIcon />*/}
+              {/*            </Button>*/}
+              {/*          </FormControl>*/}
+              {/*        </PopoverTrigger>*/}
+              {/*        <PopoverContent align="start" className="w-auto p-0">*/}
+              {/*          <Calendar*/}
+              {/*            mode="single"*/}
+              {/*            defaultMonth={field.value}*/}
+              {/*            selected={field.value}*/}
+              {/*            onSelect={field.onChange}*/}
+              {/*            fixedWeeks*/}
+              {/*            weekStartsOn={1}*/}
+              {/*            fromDate={dobFromDate}*/}
+              {/*            toDate={new Date()}*/}
+              {/*            captionLayout="dropdown-buttons"*/}
+              {/*          />*/}
+              {/*        </PopoverContent>*/}
+              {/*      </Popover>*/}
+              {/*      <FormMessage />*/}
+              {/*    </FormItem>*/}
+              {/*  )}*/}
+              {/*/>*/}
               <FormField
                 control={form.control}
                 name="password"
@@ -279,19 +232,13 @@ export default function SignupPage() {
                   <FormItem>
                     <div className="flex gap-2 items-center">
                       <FormControl>
-                        <Checkbox
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
+                        <Checkbox checked={field.value} onCheckedChange={field.onChange} />
                       </FormControl>
                       <FormLabel>I accept the terms and conditions</FormLabel>
                     </div>
                     <FormDescription>
                       By signing up you agree to our{" "}
-                      <Link
-                        href="/terms"
-                        className="text-primary hover:underline"
-                      >
+                      <Link href="/terms" className="text-primary hover:underline">
                         terms and conditions
                       </Link>
                     </FormDescription>

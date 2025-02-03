@@ -4,9 +4,9 @@ import { columns } from "@/app/dashboard/employees/columns";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { DataTable } from "@/components/ui/data-table";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { employeeQueryService, getEmployeeList, getEmployeeListQuery } from "@/hooks/use-employee-query";
+import { getEmployeeList } from "@/hooks/use-employee-query";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useEffect } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { useQuery } from "react-query";
 import { z } from "zod";
@@ -48,7 +48,7 @@ const EmployeeList = () => {
               <SelectValue {...form.register("team")} placeholder="Select a team" />
             </SelectTrigger>
             <SelectContent>
-              {["Select a team", "alpha", "canary", "delta"].map(id => (
+              {["All", "alpha", "canary", "delta"].map(id => (
                 <SelectItem key={id} value={String(id)}>
                   {id}
                 </SelectItem>

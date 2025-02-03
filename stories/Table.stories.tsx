@@ -1,10 +1,7 @@
-import { Header } from "./assets/Header";
-import { columns, type Employee } from "@/app/dashboard/employees/columns";
+import { type Employee } from "@/app/dashboard/employees/columns";
 import EmployeeList from "@/components/employee-list";
-import { DataTable } from "@/components/ui/data-table";
 import type { Meta, StoryObj } from "@storybook/react";
-import { expect, fn, userEvent, within } from "@storybook/test";
-import { ColumnDef } from "@tanstack/react-table";
+import { expect, userEvent, within } from "@storybook/test";
 import { delay, http, HttpResponse } from "msw";
 import { QueryClient, QueryClientProvider } from "react-query";
 
@@ -13,11 +10,10 @@ const queryClient = new QueryClient();
 const meta = {
   title: "Components/DataTable",
   component: EmployeeList,
-  // This component will have an automatically generated Autodocs entry: https://storybook.js.org/docs/writing-docs/autodocs
   tags: ["autodocs"],
   decorators: [Story => <QueryClientProvider client={queryClient}>{Story()}</QueryClientProvider>],
+  // tanstack query 사용하기 위함
   parameters: {
-    // More on how to position stories at: https://storybook.js.org/docs/configure/story-layout
     layout: "centered",
   },
 } satisfies Meta<typeof EmployeeList>;
@@ -97,20 +93,12 @@ export const SuccessTable: Story = {
     msw: {
       handlers: [
         http.get("https://supportme.com/employee", async ({ request }) => {
-          // Construct a URL instance out of the intercepted request.
           const url = new URL(request.url);
-          // Read the "team" URL query parameter using the "URLSearchParams" API.
-          const teamName = url.searchParams.get("team");
-
-          if (teamName === "delta") {
-            return HttpResponse.json(mockData.filter(value => value.teamName === "delta"));
-          } else if (teamName === "canary") {
-            return HttpResponse.json(mockData.filter(value => value.teamName === "canary"));
-          } else if (teamName === "alpha") {
-            return HttpResponse.json(mockData.filter(value => value.teamName === "alpha"));
-          } else {
-            return HttpResponse.json(mockData);
-          }
+          const teamParam = url.searchParams.get("team");
+          const teamName = teamParam === "All" ? null : teamParam; // null 방지
+          // teamName이 존재하면 필터링, 없으면 전체 반환
+          const filteredData = teamName ? mockData.filter(value => value.teamName === teamName) : mockData;
+          return HttpResponse.json(filteredData);
         }),
       ],
     },
@@ -141,7 +129,7 @@ export const SuccessTable: Story = {
     });
     await step("Select a team 을 선택하면 모든 데이터가 보여진다.", async () => {
       await userEvent.click(canvas.getByRole("combobox"));
-      await userEvent.click(within(canvasElement.ownerDocument!.body).getByRole("option", { name: /Select a team/i }));
+      await userEvent.click(within(canvasElement.ownerDocument!.body).getByRole("option", { name: /All/i }));
       await delay(300);
 
       expect(canvas.getByRole("button", { name: /Go to next page/i })).toBeEnabled();

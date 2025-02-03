@@ -33,6 +33,16 @@ export const Default: Story = {
   },
 };
 
+export const Secondary: Story = {
+  args: {
+    variant: "secondary",
+    size: "sm",
+    disabled: false,
+    onClick: action("secondary click"),
+    children: "secondary Button",
+  },
+};
+
 export const Outlined: Story = {
   args: {
     variant: "outline",

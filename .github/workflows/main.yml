@@ -18,16 +18,12 @@ jobs:
         with:
           version: 10
           run_install: false
-
       - name: Install Dependency
         run: pnpm install -no-frozen-lockfile
-      - name: Install dependencies
-        # ⚠️ See your package manager's documentation for the correct command to install dependencies in a CI environment.
-        run: pnpm i
+
       - name: Run Chromatic
         uses: chromaui/action@latest
         with:
-          # ⚠️ Make sure to configure a `CHROMATIC_PROJECT_TOKEN` repository secret
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
       - name: test-ci
         run: pnpm test-storybook:ci

@@ -21,9 +21,12 @@ export const Over: Story = {
     employeesPresentPercentage: 80,
   },
 
+  // play 함수: 스토리 실행 중 상호작용 테스트 정의
   async play({ canvasElement, step, args }) {
+    // Storybook 캔버스 요소를 선택해 테스트 컨텍스트로 사용
     const canvas = within(canvasElement);
 
+    // 테스트 단계를 명확히 구분하여 각 단계에서 어떤 동작이 수행되고 확인되는지 설명.
     await step(`직원이 75% 이상일 때 '${args.employeesPresentPercentage}% of employees are present'문구가 보여지고 색상은 녹색이다.`, async () => {
       const str = expect(canvas.getByText(`${args.employeesPresentPercentage}% of employees are present`));
       await str.toBeInTheDocument();
